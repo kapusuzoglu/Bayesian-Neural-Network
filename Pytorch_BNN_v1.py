@@ -9,9 +9,8 @@ from torch.autograd import Variable
 from sklearn.model_selection import KFold
 
 # Parameters
-wght_decay, learn_rate = 0.01, 5e-3
-train_data_ratio, nb_units, nb_epochs = 0.8, 50, 300
-p_drop = [0.01, 0.02, 0.04, 0.06, 0.1, 0.2, 0.3, 0.5]
+wght_decay, p_drop, learn_rate = 0.1, 0.04, 4e-3
+train_data_ratio, nb_units, nb_epochs = 0.9, 200, 1000
 
 def normalize_max_min(data, data_max, data_min):
     return (data-data_min) / (data_max-data_min)
@@ -52,7 +51,7 @@ def measurements_and_training_data(num_parts=25, ratio_=1.0):
     # measured_bl_sets = [] # list of BL sets
 
     for set_id in range(1, total_sets+1):    # loop over each part set
-        measured_bl_eachSet = []
+        # measured_bl_eachSet = []
         for part_id in total_parts:  # loop over each manufactured part ID
 
             # Read Process parameters & bond length measurements
@@ -82,9 +81,16 @@ def measurements_and_training_data(num_parts=25, ratio_=1.0):
             # first column is 1st layer and soon(each row is each interface bond length, BL)
             measured_bl = np.fliplr(reshaped_measured_bl).T  # flip matrix left to right
 
+            bl_measurements = measured_bl.reshape(num_interfaces_of_a_part).copy()
+
+            # check if the BL is greater than layer height, hth, if so, then fix it to max. possible BL = layer height
+            bl_measurements[bl_measurements > hth] = hth
+
             # store measured BL data of all parts in order reshaped in row
-            measured_bl_row.append([measured_bl.reshape(num_interfaces_of_a_part).copy()])
-            measured_bl_eachSet.append([measured_bl.reshape(num_interfaces_of_a_part).copy()])
+            measured_bl_row.append(bl_measurements)
+
+            # measured_bl_eachSet.append([measured_bl.reshape(num_interfaces_of_a_part).copy()])
+
 
             # if part_id==5:
             #     print(measured_bl.T)
@@ -119,8 +125,10 @@ def measurements_and_training_data(num_parts=25, ratio_=1.0):
     inp = np.array(inp, dtype='float32')
 
     # concatenating different size arrays stored in a list
-    measured_bl_row = np.concatenate(measured_bl_row, axis=1)
-    measured_bl_row = measured_bl_row.T  # transpose s.t. the number of rows matches Inp
+    measured_bl_row = np.concatenate(measured_bl_row, axis=0)
+    measured_bl_row = measured_bl_row[..., np.newaxis]
+    # measured_bl_row = measured_bl_row.T  # transpose s.t. the number of rows matches Inp
+
 
     # Normalize training data
     # inp = (inp - inp.mean(axis=0)) / inp.std(axis=0)  # take mean of each column
@@ -168,9 +176,11 @@ y[y < 0.1] = 0
 # save max and min values of x and y
 max_x, min_x, max_y, min_y = x.max(axis=0), x.min(axis=0), y.max(axis=0), y.min(axis=0)
 
-# import pickle
-# with open('maxmin.pickle', 'wb') as f:
-#     pickle.dump([max_x, min_x, max_y, min_y], f)
+import pickle
+
+# Save max and min values of data
+with open('maxmin.pickle', 'wb') as f:
+    pickle.dump([max_x, min_x, max_y, min_y], f)
 
 # normalize data
 x = normalize_max_min(x, max_x, min_x)
@@ -294,7 +304,7 @@ def train_mc_dropout(data, drop_prob, ratio_train_data, num_epochs, num_units, l
     train_logliks, test_logliks = [], []
     train_rmses, test_rmses = [], []
 
-    history_loss, history_loss_test, history_rmse, history_rmse_test = [], [], [], []
+    # history_loss, history_loss_test, history_rmse, history_rmse_test = [], [], [], []
 
     # -------------------------------------------------------------------------
     #               Random Permutation of Training Data
@@ -327,20 +337,23 @@ def train_mc_dropout(data, drop_prob, ratio_train_data, num_epochs, num_units, l
 
         loss = net.fit(x_train, y_train)
 
-        train_loss, rmse_train = net.get_loss_and_rmse(x_train, y_train, num_samples=num_samples)
-        rmse_train = rmse_train.cpu().data.numpy()
+        # train_loss, rmse_train = net.get_loss_and_rmse(x_train, y_train, num_samples=num_samples)
+        # rmse_train = rmse_train.cpu().data.numpy()
 
-        test_loss, rmse_test = net.get_loss_and_rmse(x_test, y_test, num_samples=num_samples)
-        test_loss, rmse_test = test_loss.cpu().data.numpy(), rmse_test.cpu().data.numpy()
+        # test_loss, rmse_test = net.get_loss_and_rmse(x_test, y_test, num_samples=num_samples)
+        # test_loss, rmse_test = test_loss.cpu().data.numpy(), rmse_test.cpu().data.numpy()
 
-        history_loss.append(loss.cpu().data.numpy() / len(x_train))
-        history_loss_test.append(test_loss / len(x_test))
-        history_rmse.append(rmse_train )
-        history_rmse_test.append(rmse_test )
+        # history_loss.append(loss.cpu().data.numpy() / len(x_train))
+        # history_loss_test.append(test_loss / len(x_test))
+        # history_rmse.append(rmse_train )
+        # history_rmse_test.append(rmse_test )
 
         if i % log_every == 0 or i == num_epochs - 1:
-            # test_loss, rmse = net.get_loss_and_rmse(x_test, y_test, num_samples=num_samples)
-            # test_loss, rmse = test_loss.cpu().data.numpy(), rmse.cpu().data.numpy()
+            train_loss, rmse_train = net.get_loss_and_rmse(x_train, y_train, num_samples=num_samples)
+            rmse_train = rmse_train.cpu().data.numpy()
+
+            test_loss, rmse_test = net.get_loss_and_rmse(x_test, y_test, num_samples=num_samples)
+            test_loss, rmse_test = test_loss.cpu().data.numpy(), rmse_test.cpu().data.numpy()
 
             print('Epoch: %4d, Train loss: %6.3f Test loss: %6.3f Train RMSE: %.3f Test RMSE: %.3f' %
                     (i, loss.cpu().data.numpy() / len(x_train), test_loss / len(x_test), rmse_train, rmse_test))
@@ -357,26 +370,26 @@ def train_mc_dropout(data, drop_prob, ratio_train_data, num_epochs, num_units, l
     train_rmses.append(train_rmse.cpu().data.numpy())
     test_rmses.append(test_rmse.cpu().data.numpy())
 
-    plt.figure()
-    # plot history of accuracy
-    # Plot training & validation accuracy values
-    plt.plot(history_rmse)
-    plt.plot(history_rmse_test)
-    plt.title('Model accuracy')
-    plt.ylabel('RMSE')
-    plt.xlabel('Epoch')
-    plt.legend(['Train', 'Test'], loc='upper left')
-    plt.show()
-
-    plt.figure()
-    # Plot training & validation loss values
-    plt.plot(history_loss)
-    plt.plot(history_loss_test)
-    plt.title('Model loss')
-    plt.ylabel('Loss')
-    plt.xlabel('Epoch')
-    plt.legend(['Train', 'Test'], loc='upper left')
-    plt.show()
+    # plt.figure()
+    # # plot history of accuracy
+    # # Plot training & validation accuracy values
+    # plt.plot(history_rmse)
+    # plt.plot(history_rmse_test)
+    # plt.title('Model accuracy')
+    # plt.ylabel('RMSE')
+    # plt.xlabel('Epoch')
+    # plt.legend(['Train', 'Test'], loc='upper left')
+    # plt.show()
+    #
+    # plt.figure()
+    # # Plot training & validation loss values
+    # plt.plot(history_loss)
+    # plt.plot(history_loss_test)
+    # plt.title('Model loss')
+    # plt.ylabel('Loss')
+    # plt.xlabel('Epoch')
+    # plt.legend(['Train', 'Test'], loc='upper left')
+    # plt.show()
 
     print('Train log. lik. = %6.3f +/- %6.3f' % (-np.array(train_logliks).mean(), np.array(train_logliks).var() ** 0.5))
     print('Test  log. lik. = %6.3f +/- %6.3f' % (-np.array(test_logliks).mean(), np.array(test_logliks).var() ** 0.5))
@@ -494,22 +507,19 @@ def train_mc_dropout_Kfold(data, drop_prob, n_splits, num_epochs, num_units, lea
 
 
     # Build the network
+
+# Train the BNN
 net, x_tst, y_tst = train_mc_dropout(data=train_data, drop_prob=p_drop, num_epochs=nb_epochs,
                                      ratio_train_data=train_data_ratio, num_units=nb_units, learn_rate=learn_rate,
                                      weight_decay=wght_decay, num_samples=10, log_every=100)
+# Save pytorch model
+torch.save(net.network, 'BNN_BLmodel.pt')
+BL_model = torch.load('BNN_BLmodel.pt')
+net.network = BL_model
 
 # # print model parameters
 # for param in net.network.parameters():
 #   print(param.data)
-
-
-# net = train_mc_dropout(data=train_data, drop_prob=0.5, num_epochs=300, n_splits=2,
-#                         num_units=20, learn_rate=1e-2, weight_decay=1/len(train_data), num_samples=30, log_every=100)
-
-# save pytorch model
-# torch.save(net.network, 'BNN_BLmodel.pt')
-# BL_model = torch.load('BNN_BLmodel.pt')
-# net.network = BL_model
 
 
 # # Get a tuple of unique values & their first index location from a numpy array
@@ -532,15 +542,14 @@ x_tst = x_tst[sorted_indices]
 y_tst = y_tst[sorted_indices]
 
 
-
 # # Find index where elements change value numpy (temperature value first column)
 # # sorted_test_data[:-1, 0] != sorted_test_data[1:, 0] or np.where(v[:-1] != v[1:])[0] (for indices)
 # # unique_temp_index: indices up to which same temperature data is sorted, every index value is the last data of that
 # # part that is printed with that temperature
 # unique_temp_index = np.where(x_tst[:-1, 0] != x_tst[1:, 0])[0]
 
-
-x_pred = torch.tensor(x_tst.astype(np.float32)) # convert to torch tensor
+# convert to torch tensor
+x_pred = torch.tensor(x_tst.astype(np.float32))
 
 samples = []
 noises = []
