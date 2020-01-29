@@ -1,71 +1,59 @@
 K-fold(n_splits=10, shuffle=True)
-
 Dropout probability:  0.02
 	Train log. lik. =  1.569 +/-  0.011
 	Test  log. lik. =  1.528 +/-  0.033
 	Train RMSE      =  0.055 +/-  0.001
 	Test  RMSE      =  0.057 +/-  0.003
- 
 Dropout probability:  0.03
 	Train log. lik. =  1.568 +/-  0.023
 	Test  log. lik. =  1.520 +/-  0.037
 	Train RMSE      =  0.055 +/-  0.001
 	Test  RMSE      =  0.058 +/-  0.003
-
 Dropout probability:  0.04
 	Train log. lik. =  1.569 +/-  0.014
 	Test  log. lik. =  1.530 +/-  0.025
 	Train RMSE      =  0.055 +/-  0.001
 	Test  RMSE      =  0.057 +/-  0.002
-
 Dropout probability:  0.05
 	Train log. lik. =  1.548 +/-  0.024
 	Test  log. lik. =  1.514 +/-  0.022
 	Train RMSE      =  0.056 +/-  0.001
 	Test  RMSE      =  0.058 +/-  0.002
-	
 Dropout probability:  0.06
 	Train log. lik. =  1.562 +/-  0.008
 	Test  log. lik. =  1.526 +/-  0.022
 	Train RMSE      =  0.055 +/-  0.001
 	Test  RMSE      =  0.057 +/-  0.002
-	
 Dropout probability:  0.07
 	Train log. lik. =  1.554 +/-  0.016
 	Test  log. lik. =  1.521 +/-  0.025
 	Train RMSE      =  0.055 +/-  0.001
 	Test  RMSE      =  0.057 +/-  0.002
-		
 Dropout probability:  0.08
 	Train log. lik. =  1.553 +/-  0.019
 	Test  log. lik. =  1.521 +/-  0.032
 	Train RMSE      =  0.056 +/-  0.002
 	Test  RMSE      =  0.057 +/-  0.003
-	
 Dropout probability:  0.1
 	Train log. lik. =  1.552 +/-  0.014
 	Test  log. lik. =  1.524 +/-  0.032
 	Train RMSE      =  0.055 +/-  0.00163
 	Test  RMSE      =  0.057 +/-  0.002
-	
 Dropout probability:  0.15
 	Train log. lik. =  1.534 +/-  0.009
 	Test  log. lik. =  1.506 +/-  0.017
 	Train RMSE      =  0.056 +/-  0.001
 	Test  RMSE      =  0.058 +/-  0.001
-	
 Dropout probability:  0.2
 	Train log. lik. =  1.524 +/-  0.012
 	Test  log. lik. =  1.499 +/-  0.027
 	Train RMSE      =  0.056 +/-  0.001
 	Test  RMSE      =  0.057 +/-  0.002
-	
 Dropout probability:  0.3
 	Train log. lik. =  1.498 +/-  0.007
 	Test  log. lik. =  1.476 +/-  0.028
 	Train RMSE      =  0.056 +/-  0.001
 	Test  RMSE      =  0.058 +/-  0.003
-	
 Dropout probability:  0.4
 	Train log. lik. =  1.465 +/-  0.009
 	Test  log. lik. =  1.448 +/-  0.027
@@ -76,44 +64,36 @@ Dropout probability:  0.4
 
 
 Keep Dropout probability: 0.04, and loop over different number of units
-
 Number of units:  10
 	Train log. lik. =  1.346 +/-  0.025
 	Test  log. lik. =  1.340 +/-  0.040
 	Train RMSE      =  0.068 +/-  0.004
 	Test  RMSE      =  0.068 +/-  0.005
-
 Number of units:  20
 	Train log. lik. =  1.439 +/-  0.024
 	Test  log. lik. =  1.426 +/-  0.030
 	Train RMSE      =  0.062 +/-  0.003
 	Test  RMSE      =  0.063 +/-  0.003
-
-
 Number of units:  30
 	Train log. lik. =  1.490 +/-  0.023
 	Test  log. lik. =  1.467 +/-  0.029
 	Train RMSE      =  0.059 +/-  0.002
 	Test  RMSE      =  0.060 +/-  0.003
-
 Number of units:  50
 	Train log. lik. =  1.523 +/-  0.020
 	Test  log. lik. =  1.495 +/-  0.024
 	Train RMSE      =  0.057 +/-  0.002
 	Test  RMSE      =  0.059 +/-  0.002
-
 Number of units:  100
 	Train log. lik. =  1.568 +/-  0.011
 	Test  log. lik. =  1.525 +/-  0.022
 	Train RMSE      =  0.055 +/-  0.001
 	Test  RMSE      =  0.057 +/-  0.002
-	
 Number of units:  150
 	Train log. lik. =  1.586 +/-  0.011
 	Test  log. lik. =  1.536 +/-  0.021
 	Train RMSE      =  0.054 +/-  0.001
 	Test  RMSE      =  0.057 +/-  0.002
-
 Number of units:  200
 	Train log. lik. =  1.597 +/-  0.020
 	Test  log. lik. =  1.537 +/-  0.015
@@ -125,5 +105,195 @@ Number of units:  250
 	Test  log. lik. =  1.525 +/-  0.068
 	Train RMSE      =  0.054 +/-  0.003
 	Test  RMSE      =  0.057 +/-  0.004
+
+
+
+
+
+
+
+
+
+K-fold(n_splits=5, shuffle=True), (6014, 5) (1504, 5)
+p_drop_rate=0.1, 2 hidden layers
+Number of units:  10
+	Train log. lik. = 1.34239 +/- 0.04091
+	Test  log. lik. = 1.33850 +/- 0.03539
+	Train RMSE      = 0.07007 +/- 0.00399
+	Test  RMSE      = 0.07045 +/- 0.00406
+	Aleatoric uncertainty mean: 0.0481, Epistemic uncertainty mean: 0.0177, Total uncertainty mean: 0.0516
+	Aleatoric uncertainty std: 0.0094, Epistemic uncertainty std: 0.0074, Total uncertainty std: 0.0104
+Number of units:  20
+	Train log. lik. = 1.41030 +/- 0.02420
+	Test  log. lik. = 1.39516 +/- 0.01840
+	Train RMSE      = 0.06461 +/- 0.00283
+	Test  RMSE      = 0.06545 +/- 0.00218
+	Aleatoric uncertainty mean: 0.0491, Epistemic uncertainty mean: 0.0141, Total uncertainty mean: 0.0513
+	Aleatoric uncertainty std: 0.0094, Epistemic uncertainty std: 0.0055, Total uncertainty std: 0.0097
+Number of units:  30
+	Train log. lik. = 1.45699 +/- 0.02752
+	Test  log. lik. = 1.43582 +/- 0.01516
+	Train RMSE      = 0.06169 +/- 0.00236
+	Test  RMSE      = 0.06293 +/- 0.00072
+	Aleatoric uncertainty mean: 0.0459, Epistemic uncertainty mean: 0.0144, Total uncertainty mean: 0.0485
+	Aleatoric uncertainty std: 0.0093, Epistemic uncertainty std: 0.0056, Total uncertainty std: 0.0091
+Number of units:  50
+	Train log. lik. = 1.50313 +/- 0.01184
+	Test  log. lik. = 1.47033 +/- 0.04085
+	Train RMSE      = 0.05943 +/- 0.00102
+	Test  RMSE      = 0.06125 +/- 0.00353
+	Aleatoric uncertainty mean: 0.0461, Epistemic uncertainty mean: 0.0143, Total uncertainty mean: 0.0486
+	Aleatoric uncertainty std: 0.0121, Epistemic uncertainty std: 0.0058, Total uncertainty std: 0.0122
+Number of units:  100
+	Train log. lik. = 1.53818 +/- 0.03087
+	Test  log. lik. = 1.49213 +/- 0.03241
+	Train RMSE      = 0.05747 +/- 0.00159
+	Test  RMSE      = 0.05956 +/- 0.00193
+	Aleatoric uncertainty mean: 0.0401, Epistemic uncertainty mean: 0.0120, Total uncertainty mean: 0.0422
+	Aleatoric uncertainty std: 0.0119, Epistemic uncertainty std: 0.0036, Total uncertainty std: 0.0114
+	
+K-fold(n_splits=5, shuffle=False), (6014, 5) (1504, 5)
+p_drop_rate=0.1, 2 hidden layers
+Number of units:  10
+	Train log. lik. = 1.24427 +/- 0.02849
+	Test  log. lik. = 1.23782 +/- 0.04200
+	Train RMSE      = 0.07349 +/- 0.00342
+	Test  RMSE      = 0.07296 +/- 0.00302	
+Number of units:  20
+	Train log. lik. = 1.36534 +/- 0.02635
+	Test  log. lik. = 1.33406 +/- 0.03550
+	Train RMSE      = 0.06616 +/- 0.00453
+	Test  RMSE      = 0.06930 +/- 0.00612
+Number of units:  30
+	Train log. lik. = 1.43669 +/- 0.01562
+	Test  log. lik. = 1.39706 +/- 0.02599
+	Train RMSE      = 0.06095 +/- 0.00169
+	Test  RMSE      = 0.06344 +/- 0.00323
+Number of units:  50
+	Train log. lik. = 1.47844 +/- 0.01286
+	Test  log. lik. = 1.42827 +/- 0.01937
+	Train RMSE      = 0.05857 +/- 0.00199
+	Test  RMSE      = 0.06237 +/- 0.00312
+Number of units:  100
+	Train log. lik. = 1.51446 +/- 0.01935
+	Test  log. lik. = 1.45428 +/- 0.01834
+	Train RMSE      = 0.05722 +/- 0.00148
+	Test  RMSE      = 0.06073 +/- 0.00134
+	
+
+
+
+
+K-fold(n_splits=5, shuffle=True), (6014, 5) (1504, 5)
+10 neurons, 2 hidden layers
+Dropout probability:  0.05
+	Train log. lik. = 1.29529 +/- 0.02867
+	Test  log. lik. = 1.28405 +/- 0.04055
+	Train RMSE      = 0.07213 +/- 0.00413
+	Test  RMSE      = 0.07320 +/- 0.00375
+	Aleatoric uncertainty mean: 0.0584, Epistemic uncertainty mean: 0.0220, Total uncertainty mean: 0.0626
+	Aleatoric uncertainty std: 0.0109, Epistemic uncertainty std: 0.0075, Total uncertainty std: 0.0122
+Dropout probability:  0.075
+	Train log. lik. = 1.28247 +/- 0.03667
+	Test  log. lik. = 1.27515 +/- 0.04103
+	Train RMSE      = 0.07262 +/- 0.00611
+	Test  RMSE      = 0.07309 +/- 0.00636
+	Aleatoric uncertainty mean: 0.0631, Epistemic uncertainty mean: 0.0238, Total uncertainty mean: 0.0677
+	Aleatoric uncertainty std: 0.0144, Epistemic uncertainty std: 0.0103, Total uncertainty std: 0.0166
+Dropout prob.:  0.1
+	Train log. lik. = 1.25127 +/- 0.02242
+	Test  log. lik. = 1.24707 +/- 0.03739
+	Train RMSE      = 0.07332 +/- 0.00306
+	Test  RMSE      = 0.07401 +/- 0.00463
+	Aleatoric uncertainty mean: 0.0650, Epistemic uncertainty mean: 0.0243, Total uncertainty mean: 0.0697
+	Aleatoric uncertainty std: 0.0125, Epistemic uncertainty std: 0.0093, Total uncertainty std: 0.0141
+Dropout prob.:  0.15
+	Train log. lik. = 1.20133 +/- 0.05226
+	Test  log. lik. = 1.19988 +/- 0.04838
+	Train RMSE      = 0.07608 +/- 0.00474
+	Test  RMSE      = 0.07610 +/- 0.00447
+	Aleatoric uncertainty mean: 0.0677, Epistemic uncertainty mean: 0.0284, Total uncertainty mean: 0.0738
+	Aleatoric uncertainty std: 0.0116, Epistemic uncertainty std: 0.0113, Total uncertainty std: 0.0145
+Dropout prob.:  0.2
+	Train log. lik. = 1.12993 +/- 0.02900
+	Test  log. lik. = 1.13111 +/- 0.02095
+	Train RMSE      = 0.08069 +/- 0.00295
+	Test  RMSE      = 0.08056 +/- 0.00155
+	Aleatoric uncertainty mean: 0.0800, Epistemic uncertainty mean: 0.0399, Total uncertainty mean: 0.0897
+	Aleatoric uncertainty std: 0.0164, Epistemic uncertainty std: 0.0146, Total uncertainty std: 0.0207
+Dropout prob.:  0.3
+	Train log. lik. = 1.04789 +/- 0.02648
+	Test  log. lik. = 1.04360 +/- 0.03155
+	Train RMSE      = 0.08723 +/- 0.00358
+	Test  RMSE      = 0.08770 +/- 0.00394
+	Aleatoric uncertainty mean: 0.0813, Epistemic uncertainty mean: 0.0381, Total uncertainty mean: 0.0903
+	Aleatoric uncertainty std: 0.0129, Epistemic uncertainty std: 0.0156, Total uncertainty std: 0.0176
+Dropout prob.:  0.4
+	Train log. lik. = 1.00387 +/- 0.01385
+	Test  log. lik. = 1.00609 +/- 0.00870
+	Train RMSE      = 0.08988 +/- 0.00255
+	Test  RMSE      = 0.08965 +/- 0.00199
+	Aleatoric uncertainty mean: 0.0856, Epistemic uncertainty mean: 0.0379, Total uncertainty mean: 0.0944
+	Aleatoric uncertainty std: 0.0084, Epistemic uncertainty std: 0.0156, Total uncertainty std: 0.0129
+
+
+K-fold(n_splits=5, shuffle=True), (6014, 5) (1504, 5)
+50 neurons, 2 hidden layers
+Dropout probability:  0.05
+	Train log. lik. = 1.47090 +/- 0.02455
+	Test  log. lik. = 1.45164 +/- 0.02108
+	Train RMSE      = 0.06033 +/- 0.00266
+	Test  RMSE      = 0.06167 +/- 0.00267
+	Aleatoric uncertainty mean: 0.0507, Epistemic uncertainty mean: 0.0172, Total uncertainty mean: 0.0539
+	Aleatoric uncertainty std: 0.0143, Epistemic uncertainty std: 0.0079, Total uncertainty std: 0.0148
+Dropout probability:  0.075
+	Train log. lik. = 1.48330 +/- 0.02084
+	Test  log. lik. = 1.46127 +/- 0.01676
+	Train RMSE      = 0.05909 +/- 0.00278
+	Test  RMSE      = 0.05979 +/- 0.00131
+	Aleatoric uncertainty mean: 0.0497, Epistemic uncertainty mean: 0.0172, Total uncertainty mean: 0.0527
+	Aleatoric uncertainty std: 0.0125, Epistemic uncertainty std: 0.0067, Total uncertainty std: 0.0136
+Dropout prob.:  0.1
+	Train log. lik. = 1.47203 +/- 0.01937
+	Test  log. lik. = 1.45386 +/- 0.02398
+	Train RMSE      = 0.05904 +/- 0.00177
+	Test  RMSE      = 0.06006 +/- 0.00164
+	Aleatoric uncertainty mean: 0.0492, Epistemic uncertainty mean: 0.0172, Total uncertainty mean: 0.0524
+	Aleatoric uncertainty std: 0.0105, Epistemic uncertainty std: 0.0085, Total uncertainty std: 0.0122
+Dropout prob.:  0.15
+	Train log. lik. = 1.46671 +/- 0.01063
+	Test  log. lik. = 1.44570 +/- 0.01162
+	Train RMSE      = 0.05869 +/- 0.00123
+	Test  RMSE      = 0.06010 +/- 0.00191
+	Aleatoric uncertainty mean: 0.0529, Epistemic uncertainty mean: 0.0199, Total uncertainty mean: 0.0568
+	Aleatoric uncertainty std: 0.0118, Epistemic uncertainty std: 0.0079, Total uncertainty std: 0.0133
+Dropout prob.:  0.2
+	Train log. lik. = 1.43015 +/- 0.01412
+	Test  log. lik. = 1.41555 +/- 0.02322
+	Train RMSE      = 0.06062 +/- 0.00130
+	Test  RMSE      = 0.06160 +/- 0.00322
+	Aleatoric uncertainty mean: 0.0557, Epistemic uncertainty mean: 0.0255, Total uncertainty mean: 0.0616
+	Aleatoric uncertainty std: 0.0121, Epistemic uncertainty std: 0.0110, Total uncertainty std: 0.0147
+Dropout prob.:  0.3
+	Train log. lik. = 1.39536 +/- 0.00989
+	Test  log. lik. = 1.38638 +/- 0.00879
+	Train RMSE      = 0.06190 +/- 0.00038
+	Test  RMSE      = 0.06239 +/- 0.00141
+	Aleatoric uncertainty mean: 0.0548, Epistemic uncertainty mean: 0.0229, Total uncertainty mean: 0.0598
+	Aleatoric uncertainty std: 0.0106, Epistemic uncertainty std: 0.0105, Total uncertainty std: 0.0133
+Dropout prob.:  0.4
+	Train log. lik. = 1.34287 +/- 0.00779
+	Test  log. lik. = 1.33715 +/- 0.01193
+	Train RMSE      = 0.06526 +/- 0.00098
+	Test  RMSE      = 0.06546 +/- 0.00144
+	Aleatoric uncertainty mean: 0.0608, Epistemic uncertainty mean: 0.0285, Total uncertainty mean: 0.0679
+	Aleatoric uncertainty std: 0.0129, Epistemic uncertainty std: 0.0158, Total uncertainty std: 0.0180
+
+
+	
+
+	
+
+
 
 

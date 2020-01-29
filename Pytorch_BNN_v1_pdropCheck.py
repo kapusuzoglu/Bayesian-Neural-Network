@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
+# from mpl_toolkits import mplot3d
 import numpy as np
 import torch
 import torch.nn as nn
@@ -8,20 +8,25 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 from sklearn.model_selection import KFold
 
+# ### import file from another folder ###
+# import sys
+# # insert at 1, 0 is the script path (or '' in REPL)
+# sys.path.insert(1, 'C:/Users/berkc/git/Python-Save-Figure')
+# import SaveFigAsPDF_PGF as sF
+
 # Parameters
 wght_decay, learn_rate = 0.1, 4e-3
-train_data_ratio, nb_epochs = 0.9, 1000
-# p_drop_rate = [0.08, 0.1, 0.15, 0.2, 0.3, 0.4]
-p_drop_rate = [0.04]
-nb_units = [150, 200, 250, 300]
+train_data_ratio, nb_epochs = 0.8, 1900
+p_drop_rate = 0.1
+nb_units = 50
+# nb_units = [10, 20, 30, 50, 100]
+# p_drop_rate = [0.05, 0.075, 0.1, 0.15, 0.2, 0.3, 0.4]
 
 def normalize_max_min(data, data_max, data_min):
     return (data - data_min) / (data_max - data_min)
 
-
 def denormalize_max_min(data, data_max, data_min):
     return data * (data_max - data_min) + data_min
-
 
 def measurements_and_training_data(num_parts=25, ratio_=1.0):
     """
@@ -157,7 +162,6 @@ def measurements_and_training_data(num_parts=25, ratio_=1.0):
 
     return alldata, x_test, y_test
 
-
 # load training and test data
 train_data, x_tst, y_tst = measurements_and_training_data()
 
@@ -182,7 +186,10 @@ y = normalize_max_min(y, max_y, min_y)
 
 # stack input and output data
 train_data = np.column_stack((x, y))
-batch_size = train_data.shape[0]
+# batch_size = train_data.shape[0]
+
+batch_size = 128
+
 
 
 def to_variable(var=(), cuda=False, volatile=False):
@@ -352,7 +359,7 @@ def train_mc_dropout(data, drop_prob, ratio_train_data, num_epochs, num_units, l
             test_loss, rmse_test = net.get_loss_and_rmse(x_test, y_test, num_samples=num_samples)
             test_loss, rmse_test = test_loss.cpu().data.numpy(), rmse_test.cpu().data.numpy()
 
-            print('Epoch: %4d, Train loss: %6.3f Test loss: %6.3f Train RMSE: %.3f Test RMSE: %.3f' %
+            print('Epoch: %4d, Train loss: %6.5f Test loss: %6.5f Train RMSE: %.5f Test RMSE: %.5f' %
                   (i, loss.cpu().data.numpy() / len(x_train), test_loss / len(x_test), rmse_train, rmse_test))
 
     train_loss, train_rmse = net.get_loss_and_rmse(x_train, y_train, num_samples=num_samples)
@@ -388,10 +395,10 @@ def train_mc_dropout(data, drop_prob, ratio_train_data, num_epochs, num_units, l
     # plt.legend(['Train', 'Test'], loc='upper left')
     # plt.show()
 
-    print('Train log. lik. = %6.3f +/- %6.3f' % (-np.array(train_logliks).mean(), np.array(train_logliks).var() ** 0.5))
-    print('Test  log. lik. = %6.3f +/- %6.3f' % (-np.array(test_logliks).mean(), np.array(test_logliks).var() ** 0.5))
-    print('Train RMSE      = %6.3f +/- %6.3f' % (np.array(train_rmses).mean(), np.array(train_rmses).var() ** 0.5))
-    print('Test  RMSE      = %6.3f +/- %6.3f' % (np.array(test_rmses).mean(), np.array(test_rmses).var() ** 0.5))
+    print('Train log. lik. = %6.5f +/- %6.5f' % (-np.array(train_logliks).mean(), np.array(train_logliks).var() ** 0.5))
+    print('Test  log. lik. = %6.5f +/- %6.5f' % (-np.array(test_logliks).mean(), np.array(test_logliks).var() ** 0.5))
+    print('Train RMSE      = %6.5f +/- %6.5f' % (np.array(train_rmses).mean(), np.array(train_rmses).var() ** 0.5))
+    print('Test  RMSE      = %6.5f +/- %6.5f' % (np.array(test_rmses).mean(), np.array(test_rmses).var() ** 0.5))
 
     return net, x_test, y_test
 
@@ -403,10 +410,14 @@ def train_mc_dropout_Kfold(data, drop_prob, n_splits, num_epochs, num_units, lea
     train_logliks, test_logliks = [], []
     train_rmses, test_rmses = [], []
 
+
+    # avg_history_loss, avg_history_loss_test, avg_history_rmse, avg_history_rmse_test = [], [], [], []
+
     # # random shuffle data
     # np.random.shuffle(data)
 
     for j, idx in enumerate(kf.split(data)):
+        history_loss, history_loss_test, history_rmse, history_rmse_test = [], [], [], []
         print('FOLD %d:' % j)
         train_index, test_index = idx
 
@@ -427,15 +438,38 @@ def train_mc_dropout_Kfold(data, drop_prob, n_splits, num_epochs, num_units, lea
         for i in range(num_epochs):
             loss = net.fit(x_train, y_train)
 
+            # # to save loss & rmse at every epoch
+            # train_loss, rmse_train = net.get_loss_and_rmse(x_train, y_train, num_samples=num_samples)
+            # rmse_train = rmse_train.cpu().data.numpy()
+            #
+            # test_loss, rmse_test = net.get_loss_and_rmse(x_test, y_test, num_samples=num_samples)
+            # test_loss, rmse_test = test_loss.cpu().data.numpy(), rmse_test.cpu().data.numpy()
+            #
+            # history_loss.append(loss.cpu().data.numpy() / len(x_train))
+            # history_loss_test.append(test_loss / len(x_test))
+            # history_rmse.append(rmse_train)
+            # history_rmse_test.append(rmse_test)
+
             if i % log_every == 0 or i == num_epochs - 1:
-                train_loss, train_rmse = net.get_loss_and_rmse(x_test, y_test, num_samples=num_samples)
+                train_loss, train_rmse = net.get_loss_and_rmse(x_train, y_train, num_samples=num_samples)
                 train_loss, train_rmse = train_loss.cpu().data.numpy(), train_rmse.cpu().data.numpy()
 
                 test_loss, test_rmse = net.get_loss_and_rmse(x_test, y_test, num_samples=num_samples)
                 test_loss, test_rmse = test_loss.cpu().data.numpy(), test_rmse.cpu().data.numpy()
 
-                print('Epoch: %4d, Train loss: %6.3f Test loss: %6.3f Train RMSE: %.3f Test RMSE: %.3f' %
+                # history_loss.append(train_loss / len(x_train))
+                # history_loss_test.append(test_loss / len(x_test))
+                # history_rmse.append(train_rmse)
+                # history_rmse_test.append(test_rmse)
+
+
+                print('Epoch: %4d, Train loss: %6.5f Test loss: %6.5f Train RMSE: %.5f Test RMSE: %.5f' %
                       (i, loss.cpu().data.numpy() / len(x_train), test_loss / len(x_test), train_rmse, test_rmse))
+
+        # avg_history_loss.append(history_loss)
+        # avg_history_loss_test.append(history_loss_test)
+        # avg_history_rmse.append(history_rmse)
+        # avg_history_rmse_test.append(history_rmse_test)
 
         train_loss, train_rmse = net.get_loss_and_rmse(x_train, y_train, num_samples=num_samples)
         test_loss, test_rmse = net.get_loss_and_rmse(x_test, y_test, num_samples=num_samples)
@@ -446,132 +480,135 @@ def train_mc_dropout_Kfold(data, drop_prob, n_splits, num_epochs, num_units, lea
         train_rmses.append(train_rmse.cpu().data.numpy())
         test_rmses.append(test_rmse.cpu().data.numpy())
 
-    print('Train log. lik. = %6.3f +/- %6.3f' % (-np.array(train_logliks).mean(), np.array(train_logliks).var() ** 0.5))
-    print('Test  log. lik. = %6.3f +/- %6.3f' % (-np.array(test_logliks).mean(), np.array(test_logliks).var() ** 0.5))
-    print('Train RMSE      = %6.3f +/- %6.3f' % (np.array(train_rmses).mean(), np.array(train_rmses).var() ** 0.5))
-    print('Test  RMSE      = %6.3f +/- %6.3f' % (np.array(test_rmses).mean(), np.array(test_rmses).var() ** 0.5))
+    # # Save plots
+    # legends = ['Train', 'Test']
+    # format = True  # true for pdf, false for pgf
+    # file_name1 = 'Epoch_vs_Loss'
+    # file_name2 = 'Epoch_vs_RMSE'
+    #
+    # avg_history_loss = np.array(avg_history_loss).mean(axis=0)
+    # avg_history_loss_test = np.array(avg_history_loss_test).mean(axis=0)
+    # avg_history_rmse = np.array(avg_history_rmse).mean(axis=0)
+    # avg_history_rmse_test = np.array(avg_history_rmse_test).mean(axis=0)
+    #
+    # labels = ['Epoch', 'Loss']
+    #
+    # x1, y1 = list(range(1, avg_history_loss.shape[0]+1)), avg_history_loss
+    # x2, y2 = list(range(1, avg_history_loss_test.shape[0] + 1)), avg_history_loss_test
+    # sF.save_plot(x1, y1, labels, legends, format, file_name1, x2, y2)
+    #
+    # x3, y3 = list(range(1, avg_history_rmse.shape[0] + 1)), avg_history_rmse
+    # x4, y4 = list(range(1, avg_history_rmse_test.shape[0] + 1)), avg_history_rmse_test
+    # sF.save_plot(x3, y3, labels, legends, format, file_name2, x4, y4)
+
+
+
+    # labels = ['Epoch', 'RMSE']
+    # x1, y1 = list(range(1, len(history_rmse)+1)), history_rmse
+    # x2, y2 = list(range(1, len(history_rmse_test)+1)), history_rmse_test
+    # sF.save_plot(x1, y1, labels, legends, format, file_name1, x2, y2)
+    #
+    # labels = ['Epoch', 'Loss']
+    # x3, y3 = list(range(1, len(history_loss)+1)), history_loss
+    # x4, y4 = list(range(1, len(history_loss_test)+1)), history_loss_test
+    # sF.save_plot(x3, y3, labels, legends, format, file_name2, x4, y4)
+
+
+    print('Train log. lik. = %6.5f +/- %6.5f' % (-np.array(train_logliks).mean(), np.array(train_logliks).var() ** 0.5))
+    print('Test  log. lik. = %6.5f +/- %6.5f' % (-np.array(test_logliks).mean(), np.array(test_logliks).var() ** 0.5))
+    print('Train RMSE      = %6.5f +/- %6.5f' % (np.array(train_rmses).mean(), np.array(train_rmses).var() ** 0.5))
+    print('Test  RMSE      = %6.5f +/- %6.5f' % (np.array(test_rmses).mean(), np.array(test_rmses).var() ** 0.5))
 
     return net, x_test, y_test
 
-for nb_units in nb_units:
-    print('\n Number of units: ', nb_units)
 
+def main(p_drop, nb_units):
+
+    # # Build the network, K-fold
+    # net, x_tst, y_tst = train_mc_dropout_Kfold(data=train_data, drop_prob=p_drop, num_epochs=nb_epochs,
+    #                                            n_splits=int(1 / (1 - train_data_ratio)), num_units=nb_units,
+    #                                            learn_rate=learn_rate,
+    #                                            weight_decay=wght_decay, num_samples=10, log_every=100)
+
+    # without K-fold
+    net, x_tst, y_tst = train_mc_dropout(data=train_data, drop_prob=p_drop, num_epochs=nb_epochs,
+                                               ratio_train_data=train_data_ratio, num_units=nb_units,
+                                               learn_rate=learn_rate,
+                                               weight_decay=wght_decay, num_samples=10, log_every=100)
+
+
+    # # print model parameters
+    # for param in net.network.parameters():
+    #   print(param.data)
+
+    # # save pytorch model
+    # torch.save(net.network, 'BNN_BLmodel.pt')
+    # BL_model = torch.load('BNN_BLmodel.pt')
+    # net.network = BL_model
+
+    # Get a tuple of unique values & their first index location from a numpy array
+    uniqueValues, indicesList = np.unique(x_tst[:, 0], return_index=True)
+    x_tst = x_tst[indicesList]
+
+    # Only use the selected unique test data
+    y_tst = y_tst[indicesList]
+
+    # add extra test data
+    # testdata = normalize([280,35,0.65,3,3], mean_data_x, std_data_x)
+    # testdata = normalize_max_min([280,35,0.65,3,3], max_x, min_x)
+    # x_tst = np.vstack((x_tst, testdata)).astype(np.float32)
+
+    # sort test data wrt. 1st column, temperature data
+    # Returns the indices that would sort an array.
+    sorted_indices = x_tst[:, 0].argsort()
+    x_tst = x_tst[sorted_indices]
+    y_tst = y_tst[sorted_indices]
+
+    # # Find index where elements change value numpy (temperature value first column)
+    # # sorted_test_data[:-1, 0] != sorted_test_data[1:, 0] or np.where(v[:-1] != v[1:])[0] (for indices)
+    # # unique_temp_index: indices up to which same temperature data is sorted, every index value is the last data of that
+    # # part that is printed with that temperature
+    # unique_temp_index = np.where(x_tst[:-1, 0] != x_tst[1:, 0])[0]
+
+    x_pred = torch.tensor(x_tst.astype(np.float32))  # convert to torch tensor
+
+    samples = []
+    noises = []
+    for i in range(100):
+        preds = net.network.forward(x_pred).cpu().data.numpy()
+        samples.append(denormalize_max_min(preds[:, 0], max_y, min_y))
+        noises.append(denormalize_max_min(np.exp(preds[:, 1]), max_y, min_y))
+
+    samples = np.array(samples)
+    noises = np.array(noises)
+    means = (samples.mean(axis=0)).reshape(-1)
+
+    # model precision
+    # tau = l2 * (1-p_drop) / (2*y.shape[0]*wght_decay)
+
+    aleatoric = (noises ** 2).mean(axis=0) ** 0.5
+    epistemic = (samples.var(axis=0) ** 0.5).reshape(-1)
+    total_unc = (aleatoric ** 2 + epistemic ** 2) ** 0.5
+
+    print("Aleatoric uncertainty mean: {0:.4f}, Epistemic uncertainty mean: {1:.4f}, Total uncertainty mean: {2:.4f}"
+          .format(aleatoric.mean(), epistemic.mean(), total_unc.mean()))
+    print("Aleatoric uncertainty std: {0:.4f}, Epistemic uncertainty std: {1:.4f}, Total uncertainty std: {2:.4f}"
+          .format(aleatoric.std(), epistemic.std(), total_unc.std()))
+
+# Do an exhaustive search if number of units and dropout probabilities are lists
+if type(nb_units) is list and type(p_drop_rate) is list:
+    for nb_unit in nb_units:
+        print('\n Number of units: ', nb_unit)
+        for p_drop in p_drop_rate:
+            print('\n Dropout prob.: ', p_drop)
+            main(p_drop, nb_unit)
+elif type(nb_units) is list:
+    for nb_unit in nb_units:
+        print('\n Number of units: ', nb_unit)
+        main(p_drop_rate, nb_unit)
+elif type(p_drop_rate) is list:
     for p_drop in p_drop_rate:
-
-        # print('\n Dropout probability: ', p_drop)
-
-        # Build the network
-        net, x_tst, y_tst = train_mc_dropout_Kfold(data=train_data, drop_prob=p_drop, num_epochs=nb_epochs,
-                                             n_splits = int(1/(1-train_data_ratio)), num_units=nb_units,
-                                                               learn_rate=learn_rate,
-                                             weight_decay=wght_decay, num_samples=10, log_every=100)
-
-        # losses.append(train_loss)
-
-        # # Build the network
-        # net, x_tst, y_tst = train_mc_dropout(data=train_data, drop_prob=p_drop, num_epochs=nb_epochs,
-        #                                      ratio_train_data=train_data_ratio, num_units=nb_units, learn_rate=learn_rate,
-        #                                      weight_decay=wght_decay, num_samples=10, log_every=100)
-
-        # # print model parameters
-        # for param in net.network.parameters():
-        #   print(param.data)
-
-        # net = train_mc_dropout(data=train_data, drop_prob=0.5, num_epochs=300, n_splits=2,
-        #                         num_units=20, learn_rate=1e-2, weight_decay=1/len(train_data), num_samples=30, log_every=100)
-
-        # save pytorch model
-        # torch.save(net.network, 'BNN_BLmodel.pt')
-        # BL_model = torch.load('BNN_BLmodel.pt')
-        # net.network = BL_model
-
-        # Get a tuple of unique values & their first index location from a numpy array
-        uniqueValues, indicesList = np.unique(x_tst[:,0], return_index=True)
-        x_tst = x_tst[indicesList]
-
-        # Only use the selected unique test data
-        y_tst = y_tst[indicesList]
-
-        # add extra test data
-        # testdata = normalize([280,35,0.65,3,3], mean_data_x, std_data_x)
-        # testdata = normalize_max_min([280,35,0.65,3,3], max_x, min_x)
-        # x_tst = np.vstack((x_tst, testdata)).astype(np.float32)
-
-        # sort test data wrt. 1st column, temperature data
-        # Returns the indices that would sort an array.
-        sorted_indices = x_tst[:, 0].argsort()
-        x_tst = x_tst[sorted_indices]
-        y_tst = y_tst[sorted_indices]
-
-        # # Find index where elements change value numpy (temperature value first column)
-        # # sorted_test_data[:-1, 0] != sorted_test_data[1:, 0] or np.where(v[:-1] != v[1:])[0] (for indices)
-        # # unique_temp_index: indices up to which same temperature data is sorted, every index value is the last data of that
-        # # part that is printed with that temperature
-        # unique_temp_index = np.where(x_tst[:-1, 0] != x_tst[1:, 0])[0]
-
-        x_pred = torch.tensor(x_tst.astype(np.float32))  # convert to torch tensor
-
-        samples = []
-        noises = []
-        for i in range(100):
-            preds = net.network.forward(x_pred).cpu().data.numpy()
-            samples.append(denormalize_max_min(preds[:, 0], max_y, min_y))
-            noises.append(denormalize_max_min(np.exp(preds[:, 1]), max_y, min_y))
-
-        samples = np.array(samples)
-        noises = np.array(noises)
-        means = (samples.mean(axis=0)).reshape(-1)
-
-        # model precision
-        # tau = l2 * (1-p_drop) / (2*y.shape[0]*wght_decay)
-
-        aleatoric = (noises ** 2).mean(axis=0) ** 0.5
-        epistemic = (samples.var(axis=0) ** 0.5).reshape(-1)
-        total_unc = (aleatoric ** 2 + epistemic ** 2) ** 0.5
-
-        print("Aleatoric uncertainty mean: {0:.4f}, Epistemic uncertainty mean: {1:.4f}, Total uncertainty mean: {2:.4f}"
-              .format(aleatoric.mean(), epistemic.mean(), total_unc.mean()))
-        print("Aleatoric uncertainty std: {0:.4f}, Epistemic uncertainty std: {1:.4f}, Total uncertainty std: {2:.4f}"
-              .format(aleatoric.std(), epistemic.std(), total_unc.std()))
-
-        # # denormalize test data
-        # x_tst = denormalize_max_min(x_tst, max_x, min_x)
-        # y_tst = denormalize_max_min(y_tst, max_y, min_y)
-        #
-        # # PLOT FIGURES
-        # c = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
-        #      '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
-        #
-        # # Only plot some portion of the test data
-        # plt.figure(figsize=(6, 5))
-        # plt.style.use('default')
-        # plt.plot(x_tst[:, 0], y_tst, 'b.', label='Observations');
-        # plt.fill_between(x_tst[:, 0], means + epistemic, means + total_unc, color=c[0], alpha=0.3,
-        #                  label='Epistemic + Aleatoric')
-        # plt.fill_between(x_tst[:, 0], means - total_unc, means - epistemic, color=c[0], alpha=0.3)
-        # plt.fill_between(x_tst[:, 0], means - epistemic, means + epistemic, color=c[1], alpha=0.4,
-        #                  label='Epistemic')
-        # plt.plot(x_tst[:, 0], means, color='black', linewidth=1, label='Predictive mean')
-        # plt.xlabel('$x$', fontsize=16)
-        # plt.title('MC dropout', fontsize=20)
-        # plt.legend()
-        # plt.show()
-
-    # losses = np.hstack(np.array([1.5691475548482336, 1.5679491526712686, 1.56882721918734, 1.5477844821852542,
-    #                        1.5624097540760093,
-    #               1.5541813330768215]).T, np.array(losses))
-    # p_drop_rate = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.1, 0.15, 0.2, 0.3, 0.4]
-    #
-    # test_losses = [1.528,  1.520, 1.530, 1.514, 1.526, 1.521, 1.521, 1.524, 1.5206, 1.499, 1.476, 1.448]
-    #
-    # plt.figure()
-    # plt.plot(p_drop_rate, losses, 'b', label='Observations');
-    # plt.xlabel('Dropout rate', fontsize=16)
-    # plt.ylabel('Train loss', fontsize=16)
-    # plt.show()
-    #
-    # plt.figure()
-    # plt.plot(p_drop_rate, test_losses, 'b', label='Observations');
-    # plt.xlabel('Dropout rate', fontsize=16)
-    # plt.ylabel('Test loss', fontsize=16)
-    # plt.show()
+        print('\n Dropout prob.: ', p_drop)
+        main(p_drop, nb_units)
+else:
+    main(p_drop_rate, nb_units)
