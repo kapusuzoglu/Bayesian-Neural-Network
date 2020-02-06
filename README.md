@@ -13,3 +13,14 @@ Loop over different dropout probabilities and different number of units to find 
 
 ## plot_performance.py
 Plots RMSE and log likelihood of test data with respect to number of neurons and dropout probability rate.
+
+## BNN_v1_pdropCheck_plot_leave_one_out
+Plots file "Part25_Predictions", which shows the average bond length predictions of 3 sets of part 25.
+
+## BNN_v1_pdropCheck
+Plots: 
+
+*Predicted bond length (mm)* vs *Observed bond length (mm)*
+*Temperature* vs *Bond length (mm)*
+
+using the test data.
